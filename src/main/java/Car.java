@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Car implements Serializable {
     private static final List<Car> cars = new ArrayList<>();
-    private String mark;
+    private String brand;
     private String model;
     private String engine;
     private int fuelTankCapacity;
@@ -16,10 +16,10 @@ public class Car implements Serializable {
     private LocalDate productionDate;
     private List<Integer> mileageList;
     private String registrationNumber;
-    private static int maxSpeed;
+    private static int maxEmmissionOfCO2 = 200;
 
-    public Car(String mark, String model, String engine, int fuelTankCapacity, int numberOfDoors, LocalDate productionDate, int mileage, String registrationNumber, int maxSpeed) {
-        setMark(mark);
+    public Car(String brand, String model, String engine, int fuelTankCapacity, int numberOfDoors, LocalDate productionDate, int mileage, String registrationNumber, int maxSpeed) {
+        setBrand(brand);
         setModel(model);
         setEngine(engine);
         setFuelTankCapacity(fuelTankCapacity);
@@ -29,11 +29,11 @@ public class Car implements Serializable {
         addMileage(mileage);
         setRegistrationNumber(registrationNumber);
         addCar(this);
-        setMaxSpeed(maxSpeed);
+        setMaxEmissionCO2(maxSpeed);
     }
 
-    public Car(String mark, String model, String engine, int fuelTankCapacity, int numberOfDoors, LocalDate productionDate, int mileage) {
-        setMark(mark);
+    public Car(String brand, String model, String engine, int fuelTankCapacity, int numberOfDoors, LocalDate productionDate, int mileage) {
+        setBrand(brand);
         setModel(model);
         setEngine(engine);
         setFuelTankCapacity(fuelTankCapacity);
@@ -44,20 +44,20 @@ public class Car implements Serializable {
         addCar(this);
     }
 
-    public static void setMaxSpeed(int maxSpeed) {
-        if (maxSpeed > 500) {
-            throw new IllegalArgumentException("Max speed is too high");
+    public static void setMaxEmissionCO2(int maxEmission) {
+        if (maxEmission > 500) {
+            throw new IllegalArgumentException("Emission is too high");
         } else {
-            Car.maxSpeed = maxSpeed;
+            Car.maxEmmissionOfCO2 = maxEmission;
         }
     }
 
-    public void setMark(String mark) {
-        String markCheck = mark.replace(" ", "");
+    public void setBrand(String brand) {
+        String markCheck = brand.replace(" ", "");
         if (markCheck.isEmpty()) {
-            throw new IllegalArgumentException("Mark is empty");
+            throw new IllegalArgumentException("Brand is empty");
         }
-        this.mark = mark;
+        this.brand = brand;
     }
 
     public void setModel(String model) {
@@ -97,10 +97,10 @@ public class Car implements Serializable {
         this.mileageList = mileage;
     }
 
-    public static List<Car> getCarByMark(String mark) {
-        List<Car> carsByMark = cars.stream().filter(carToFindByMark -> carToFindByMark.mark.equals(mark)).toList();
+    public static List<Car> getCarByBrand(String brand) {
+        List<Car> carsByMark = cars.stream().filter(carToFindByMark -> carToFindByMark.brand.equals(brand)).toList();
         if (carsByMark.isEmpty()) {
-            throw new IllegalArgumentException("Car with mark " + mark + " not found");
+            throw new IllegalArgumentException("Car with mark " + brand + " not found");
         }
         return carsByMark;
     }
@@ -113,8 +113,8 @@ public class Car implements Serializable {
         cars.add(car);
     }
 
-    public String getMark() {
-        return mark;
+    public String getBrand() {
+        return brand;
     }
 
     public String getModel() {
@@ -145,8 +145,8 @@ public class Car implements Serializable {
         return registrationNumber;
     }
 
-    public static int getMaxSpeed() {
-        return maxSpeed;
+    public static int getMaxEmission() {
+        return maxEmmissionOfCO2;
     }
 
     public int getCarAge() {
@@ -157,7 +157,7 @@ public class Car implements Serializable {
         return age;
     }
 
-    private static void serializeCars() {
+    public static void serializeCars() {
         try (FileOutputStream fileOutputStream = new FileOutputStream("cars.ser"); ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(cars);
         } catch (IOException i) {
@@ -165,11 +165,25 @@ public class Car implements Serializable {
         }
     }
 
-    private static void deserializeCars() {
+    public static void deserializeCars() {
         try (FileOutputStream fileOutputStream = new FileOutputStream("cars.ser"); ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(cars);
         } catch (IOException i) {
             i.printStackTrace();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Car{" +
+                "brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
+                ", engine='" + engine + '\'' +
+                ", fuelTankCapacity=" + fuelTankCapacity +
+                ", numberOfDoors=" + numberOfDoors +
+                ", productionDate=" + productionDate +
+                ", mileageList=" + mileageList +
+                ", registrationNumber='" + registrationNumber + '\'' +
+                '}';
     }
 }

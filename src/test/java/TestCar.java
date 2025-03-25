@@ -13,8 +13,8 @@ class TestCar
         assertEquals(Car.class, car.getClass());
     }
     @Test
-    void testGetMark(){
-        assertEquals("Audi",car.getMark());
+    void testGetBrand(){
+        assertEquals("Audi",car.getBrand());
     }
     @Test
     void testGetModel(){
@@ -58,14 +58,14 @@ class TestCar
         assertEquals(15,car.getCarAge());
     }
     @Test
-    void testGetMaxSpeed(){
-        assertEquals(200,Car.getMaxSpeed());
+    void testGetMaxEmission(){
+        assertEquals(200,Car.getMaxEmission());
     }
     @Test
-    void testGetCarByMark(){
+    void testGetCarByBrand(){
         boolean flag = false;
-        for(Car c: Car.getCarByMark("Audi")){
-            if(c.getMark().equals("Audi")){
+        for(Car c: Car.getCarByBrand("Audi")){
+            if(c.getBrand().equals("Audi")){
                 flag = true;
                 break;
             }else {
@@ -76,6 +76,6 @@ class TestCar
     }
     @Test
     void TestSetMark(){
-        Assertions.assertThrows(IllegalArgumentException.class,(()->car.setMark("     ")));
+        Assertions.assertThrows(IllegalArgumentException.class,(()->car.setBrand("     ")));
     }
 }
