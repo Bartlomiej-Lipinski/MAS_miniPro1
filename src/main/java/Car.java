@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Car implements Serializable {
     private static final List<Car> cars = new ArrayList<>();
@@ -53,10 +54,8 @@ public class Car implements Serializable {
     }
 
     public void setBrand(String brand) {
-        String markCheck = brand.replace(" ", "");
-        if (markCheck.isEmpty()) {
-            throw new IllegalArgumentException("Brand is empty");
-        }
+        checkForEmptyString(brand, "Brand is empty");
+        checkForOnlySpaces(brand, "Brand contains only spaces");
         this.brand = brand;
     }
 
@@ -65,22 +64,37 @@ public class Car implements Serializable {
     }
 
     public void setEngine(String engine) {
+        checkForEmptyString(engine, "Engine is empty");
+        checkForOnlySpaces(engine, "Engine contains only spaces");
         this.engine = engine;
     }
 
     public void setFuelTankCapacity(int fuelTankCapacity) {
+        if (fuelTankCapacity < 0) {
+            throw new IllegalArgumentException("Fuel tank capacity is negative");
+        }
         this.fuelTankCapacity = fuelTankCapacity;
     }
 
     public void setNumberOfDoors(int numberOfDoors) {
+        if (numberOfDoors < 2) {
+            throw new IllegalArgumentException("Number of doors is too low");
+        }
         this.numberOfDoors = numberOfDoors;
     }
 
     public void setProductionDate(LocalDate productionDate) {
+        if (productionDate.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Production date is in the future");
+        }
         this.productionDate = productionDate;
     }
 
     public void setRegistrationNumber(String registrationNumber) {
+        Pattern pattern = Pattern.compile("^[A-Z]{2}\\d{5}$");
+        if (!pattern.matcher(registrationNumber).matches()) {
+            throw new IllegalArgumentException("Registration number is invalid");
+        }
         this.registrationNumber = registrationNumber;
     }
 
@@ -91,10 +105,6 @@ public class Car implements Serializable {
         if (mileageList.getLast() > mileage) {
             throw new IllegalArgumentException("Mileage cannot be lower than the previous one");
         }
-    }
-
-    public void setMileage(List<Integer> mileage) {
-        this.mileageList = mileage;
     }
 
     public static List<Car> getCarByBrand(String brand) {
@@ -185,5 +195,15 @@ public class Car implements Serializable {
                 ", mileageList=" + mileageList +
                 ", registrationNumber='" + registrationNumber + '\'' +
                 '}';
+    }
+    private void checkForEmptyString(String string, String message) {
+        if (string.isEmpty()) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+    private void checkForOnlySpaces(String string, String message) {
+        if (string.replace(" ", "").isEmpty()) {
+            throw new IllegalArgumentException(message);
+        }
     }
 }
