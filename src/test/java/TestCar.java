@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestCar
 {
-    Car car = new Car("Audi","A4","2.0 TDI",60,4, LocalDate.of(2010,1,1),100000,"KR12345",200);
+    Car car = new Car("Audi","A4","2.0 TDI",60,4, LocalDate.of(2010,1,1),100000,"KR12345");
 
     @Test
     void testConstructor(){
