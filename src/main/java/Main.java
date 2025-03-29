@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         // Create a new car instance using the first constructor
         Car car = new Car("Audi", "A4", "2.0 TDI", 60, 4, LocalDate.of(2010, 1, 1), 100000, "KR12345");
-
+        Car car3 = new Car("d", "d", " jijij", 5, 5, LocalDate.now(), 5, "WA56789");
         // Test getters
         System.out.println("Brand: " + car.getBrand());
         System.out.println("Model: " + car.getModel());

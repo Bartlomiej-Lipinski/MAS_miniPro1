@@ -14,7 +14,7 @@ public class Car implements Serializable {
     private LocalDate productionDate;
     private List<Integer> mileageList;
     private String registrationNumber;
-    private static int maxEmmissionOfCO2 = 200;
+    private static int maxEmissionOfCO2 = 200;
 
     public Car(String brand, String model, String engine, int fuelTankCapacity, int numberOfDoors, LocalDate productionDate, int mileage, String registrationNumber) {
         setBrand(brand);
@@ -24,7 +24,10 @@ public class Car implements Serializable {
         setNumberOfDoors(numberOfDoors);
         setProductionDate(productionDate);
         this.mileageList = new ArrayList<>();
-        addMileage(mileage);
+        if (mileage < 0 ) {
+            throw new IllegalArgumentException("Mileage is negative");
+        }
+        mileageList.add(mileage);
         setRegistrationNumber(registrationNumber);
         addCar(this);
     }
@@ -36,29 +39,32 @@ public class Car implements Serializable {
         setNumberOfDoors(numberOfDoors);
         setProductionDate(productionDate);
         this.mileageList = new ArrayList<>();
-        addMileage(mileage);
+        if (mileage < 0 ) {
+            throw new IllegalArgumentException("Mileage is negative");
+        }
+        mileageList.add(mileage);
         addCar(this);
     }
     public static void setMaxEmissionCO2(int maxEmission) {
         if (maxEmission > 500) {
             throw new IllegalArgumentException("Emission is too high");
         } else {
-            Car.maxEmmissionOfCO2 = maxEmission;
+            Car.maxEmissionOfCO2 = maxEmission;
         }
     }
     public void setBrand(String brand) {
-        checkForEmptyString(brand, "Brand is empty");
-        checkForOnlySpaces(brand, "Brand contains only spaces");
+        checkForNullValue(brand, "Brand is null");
+        checkStringForEmptyAndBlank(brand, "Brand Contains only spaces or is empty");
         this.brand = brand;
     }
     public void setModel(String model) {
-        checkForOnlySpaces(model, "Model contains only spaces");
-        checkForEmptyString(model, "Model is empty");
+        checkForNullValue(model, "Model is null");
+        checkStringForEmptyAndBlank(model, "Model is empty or contains only spaces");
         this.model = model;
     }
     public void setEngine(String engine) {
-        checkForEmptyString(engine, "Engine is empty");
-        checkForOnlySpaces(engine, "Engine contains only spaces");
+        checkForNullValue(engine, "Engine is null");
+        checkStringForEmptyAndBlank(engine, "Engine is empty or contains only spaces");
         this.engine = engine;
     }
     public void setFuelTankCapacity(int fuelTankCapacity) {
@@ -74,29 +80,31 @@ public class Car implements Serializable {
         this.numberOfDoors = numberOfDoors;
     }
     public void setProductionDate(LocalDate productionDate) {
+        if (productionDate == null) {
+            throw new IllegalArgumentException("Production date is null");
+        }
         if (productionDate.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Production date is in the future");
         }
         this.productionDate = productionDate;
     }
     public void setRegistrationNumber(String registrationNumber) {
+        checkForNullValue(registrationNumber, "Registration number is null");
+        checkStringForEmptyAndBlank(registrationNumber, "Registration number is empty or contains only spaces");
         Pattern pattern = Pattern.compile("^[A-Z]{2}\\d{5}$");
         if (!pattern.matcher(registrationNumber).matches()) {
             throw new IllegalArgumentException("Registration number is invalid");
         }
         this.registrationNumber = registrationNumber;
     }
-    public void addMileage(int milage) {
-        if (milage < 0) {
+    public void addMileage(int mileage) {
+        if (mileage < 0) {
             throw new IllegalArgumentException("Mileage is negative");
         }
-        if (mileageList.isEmpty()) {
-            mileageList.add(milage);
-        }
-        if (mileageList.getLast() > milage) {
+        if (mileageList.getLast() > mileage) {
             throw new IllegalArgumentException("Mileage cannot be lower than the previous one");
         }
-        mileageList.add(milage);
+        mileageList.add(mileage);
     }
     public static List<Car> getCarByBrand(String brand) {
         List<Car> carsByMark = cars.stream().filter(carToFindByMark -> carToFindByMark.brand.equals(brand)).toList();
@@ -136,7 +144,7 @@ public class Car implements Serializable {
         return registrationNumber;
     }
     public static int getMaxEmission() {
-        return maxEmmissionOfCO2;
+        return maxEmissionOfCO2;
     }
     public int getCarAge() {
         int age = LocalDate.now().getYear() - productionDate.getYear();
@@ -164,14 +172,17 @@ public class Car implements Serializable {
                 ", registrationNumber='" + registrationNumber + '\'' +
                 '}';
     }
-    private void checkForEmptyString(String string, String message) {
+    private void checkStringForEmptyAndBlank(String string, String message) {
         if (string.isEmpty()) {
+            throw new IllegalArgumentException(message);
+        }
+        if (string.isBlank()) {
             throw new IllegalArgumentException(message);
         }
 
     }
-    private void checkForOnlySpaces(String string, String message) {
-        if (string.replace(" ", "").isEmpty()) {
+    private void checkForNullValue(String string, String message) {
+        if (string == null) {
             throw new IllegalArgumentException(message);
         }
     }
